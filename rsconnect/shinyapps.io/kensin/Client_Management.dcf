@@ -1,0 +1,14 @@
+name: Client_Management
+title: Client_Management
+username:
+account: kensin
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 8153861
+bundleId: 6785584
+url: https://kensin.shinyapps.io/Client_Management/
+when: 1674962555.12368
+lastSyncTime: 1674962555.12369
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: Image_Bird.R|USER_INFO.db|bak|test_data
