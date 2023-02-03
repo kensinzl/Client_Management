@@ -23,6 +23,8 @@ server = function(input, output, session) {
                 if(!is.null(new_users)) {
                     #dbWriteTable(conn, "USERS", new_users, overwrite = TRUE)
                     dbAppendTable(conn, "USERS", new_users)  
+                    # Upload the new USER_INFO.db
+                    drive_upload("USER_INFO.db", overwrite = TRUE)
                 }
             } 
             
@@ -122,6 +124,8 @@ server = function(input, output, session) {
             }))
             if(!is.null(new_users)) {
                 dbAppendTable(conn, "USERS", new_users)  
+                # Upload the new USER_INFO.db
+                drive_upload("USER_INFO.db", overwrite = TRUE)
                 showNotification("Save Into DB !!!")
             }
         } 
@@ -223,4 +227,6 @@ server = function(input, output, session) {
         } 
         
     })
+    #https://www.jdtrat.com/blog/connect-shiny-google/
+    #https://debruine.github.io/shinyintro/data.html
 }

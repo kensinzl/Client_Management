@@ -8,23 +8,24 @@ library(stringr)
 library(pagedown)
 library(mailR)
 library(zip)
+library(googledrive)
 
 
 
 # https://datacarpentry.org/R-ecology-lesson/05-r-and-databases.html
 # when you upload the csv, its layout have to match the table column(no case senstive)
-user_table_sql = "
-CREATE TABLE USERS
-(
-  NAME TEXT,
-  STREET TEXT,
-  SUBURB TEXT,
-  CITY TEXT,
-  INSTITUTION_TYPE TEXT,
-  REGION TEXT,
-  PHONE TEXT,
-  EMAIL TEXT
-)"
+# user_table_sql = "
+# CREATE TABLE USERS
+# (
+#   NAME TEXT,
+#   STREET TEXT,
+#   SUBURB TEXT,
+#   CITY TEXT,
+#   INSTITUTION_TYPE TEXT,
+#   REGION TEXT,
+#   PHONE TEXT,
+#   EMAIL TEXT
+# )"
   
 # transaction_table_sql = "
 # CREATE TABLE TRANSACTIONS
@@ -36,18 +37,36 @@ CREATE TABLE USERS
 #   AMOUNT REAL
 # )"
   
+
+# print login user
+print(paste("No user login", drive_user()$emailAddress))
+# first time to login to get the token at local, interactive way
+# copy the secret from ~/Library/Caches/gargle into project folder
+# remember you cant change the name, how stupid
+#drive_auth()
+options(gargle_oauth_email = "zlchldjyy@gmail.com")
+options(gargle_oauth_cache = "./secret")
+drive_auth(email = gargle::gargle_oauth_email(), cache = gargle::gargle_oauth_cache())
+# print login user
+print(paste("User login", drive_user()$emailAddress))
+# Find RSQLite DB on Google Drive
+db = drive_get("USER_INFO.db")
+# Download from Google Drive
+drive_download(as_id(db$id), overwrite = TRUE)
+
+
 # create the connect, if db not exist, then create it
 conn = dbConnect(RSQLite::SQLite(), "USER_INFO.db")
 
 
 # create related tables if not exist
-does_exist_users = dbGetQuery(conn, "SELECT count(name) FROM sqlite_master WHERE type='table' AND name='USERS'")
-if(does_exist_users == 0) {
-  dbExecute(conn, user_table_sql)
-  print("----- create USERS table")
-  # insert the test data
-  # dbExecute(conn,"INSERT INTO USERS (NAME, EMAIL, PHONE, ACTIVE) VALUES ('liang', '851561330@qq.com', '0221001850', 'TRUE')")
-}
+# does_exist_users = dbGetQuery(conn, "SELECT count(name) FROM sqlite_master WHERE type='table' AND name='USERS'")
+# if(does_exist_users == 0) {
+#   dbExecute(conn, user_table_sql)
+#   print("----- create USERS table")
+#   # insert the test data
+#   # dbExecute(conn,"INSERT INTO USERS (NAME, EMAIL, PHONE, ACTIVE) VALUES ('liang', '851561330@qq.com', '0221001850', 'TRUE')")
+# }
 # does_exist_transactions = dbGetQuery(conn, "SELECT count(name) FROM sqlite_master WHERE type='table' AND name='TRANSACTIONS'")
 # if(does_exist_transactions == 0) {
 #   dbExecute(conn, transaction_table_sql)
