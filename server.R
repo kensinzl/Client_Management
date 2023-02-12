@@ -79,7 +79,7 @@ server = function(input, output, session) {
                   #attach.files = c("./www/presenter_sign.png", "./www/final_certificate.pdf"),
                   html = TRUE,
                   encoding = "utf-8",
-                  smtp = list(host.name = "smtp.gmail.com", port = 465, user.name = "nurtureheartnz@gmail.com", passwd = "", ssl = TRUE),
+                  smtp = list(host.name = "smtp.gmail.com", port = 465, user.name = "nurtureheartnz@gmail.com", passwd = google_pwd, ssl = TRUE),
                   authenticate = TRUE,
                   send = TRUE
                 )
@@ -98,7 +98,7 @@ server = function(input, output, session) {
                   #attach.files = c("./www/presenter_sign.png", "./www/final_certificate.pdf"),
                   html = TRUE,
                   encoding = "utf-8",
-                  smtp = list(host.name = "smtp.gmail.com", port = 465, user.name = "nurtureheartnz@gmail.com", passwd = "", ssl = TRUE),
+                  smtp = list(host.name = "smtp.gmail.com", port = 465, user.name = "nurtureheartnz@gmail.com", passwd = google_pwd, ssl = TRUE),
                   authenticate = TRUE,
                   send = TRUE
         )
@@ -176,11 +176,31 @@ server = function(input, output, session) {
                   attach.files = "Certificate.zip",
                   html = TRUE,
                   encoding = "utf-8",
-                  smtp = list(host.name = "smtp.gmail.com", port = 465, user.name = "nurtureheartnz@gmail.com", passwd = "", ssl = TRUE),
+                  smtp = list(host.name = "smtp.gmail.com", port = 465, user.name = "nurtureheartnz@gmail.com", passwd = google_pwd, ssl = TRUE),
                   authenticate = TRUE,
                   send = TRUE
         )
         showNotification("Certificate Email Has Send Out!")
+    })
+    
+    # save the users who already bought event into transactions table
+    observeEvent(input$save_user_transactions_to_db, {
+        transactions_users = reactive_all_certificate_users()
+        transactions_users$Event_Date = Sys.Date()
+        # new user from group email users
+        new_transactions_users = do.call(rbind, lapply(c(1: nrow(transactions_users)), function(index) {
+            user = transactions_users[index, ]
+            existing_user = dbGetQuery(conn, 'SELECT * FROM TRANSACTIONS WHERE "EMAIL" = :email', params = list(email = user$Email))
+            if(nrow(existing_user) == 0) {
+                user
+            }
+        }))
+        if(!is.null(new_transactions_users)) {
+            dbAppendTable(conn, "TRANSACTIONS", new_transactions_users)  
+            # Upload the new USER_INFO.db
+            drive_upload("USER_INFO.db", overwrite = TRUE)
+            showNotification("Save Into DB !!!")
+        }
     })
     
     # send the generated Certificate to each users
@@ -203,7 +223,7 @@ server = function(input, output, session) {
                       attach.files = paste0("./cert/Certificate_", user$Name,".jpeg"),
                       html = TRUE,
                       encoding = "utf-8",
-                      smtp = list(host.name = "smtp.gmail.com", port = 465, user.name = "nurtureheartnz@gmail.com", passwd = "", ssl = TRUE),
+                      smtp = list(host.name = "smtp.gmail.com", port = 465, user.name = "nurtureheartnz@gmail.com", passwd = google_pwd, ssl = TRUE),
                       authenticate = TRUE,
                       send = TRUE
             )
@@ -229,4 +249,12 @@ server = function(input, output, session) {
     })
     #https://www.jdtrat.com/blog/connect-shiny-google/
     #https://debruine.github.io/shinyintro/data.html
+    
+    ##################################################################
+    ##       Show transaction into UI
+    ##################################################################
+    output$users_transactions_table = renderDT({
+        all_transaction_users = dbGetQuery(conn, 'SELECT * FROM TRANSACTIONS')
+        datatable(all_transaction_users, options = list(autoWidth = TRUE))
+    })
 }

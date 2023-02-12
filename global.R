@@ -30,11 +30,15 @@ library(googledrive)
 # transaction_table_sql = "
 # CREATE TABLE TRANSACTIONS
 # (
-#   ID INTEGER PRIMARY KEY AUTOINCREMENT, 
-#   USER_ID INTEGER,
-#   USER_NAME TEXT,
-#   DATE TEXT,
-#   AMOUNT REAL
+#   NAME TEXT,
+#   STREET TEXT,
+#   SUBURB TEXT,
+#   CITY TEXT,
+#   INSTITUTION_TYPE TEXT,
+#   REGION TEXT,
+#   PHONE TEXT,
+#   EMAIL TEXT,
+#   EVENT_DATE
 # )"
   
 
@@ -57,6 +61,9 @@ drive_download(as_id(db$id), overwrite = TRUE)
 
 # create the connect, if db not exist, then create it
 conn = dbConnect(RSQLite::SQLite(), "USER_INFO.db")
+
+# Google cert
+google_pwd = ""
 
 
 # create related tables if not exist

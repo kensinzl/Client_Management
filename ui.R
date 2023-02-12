@@ -11,7 +11,8 @@ ui <- dashboardPage(
         sidebarMenu(
             menuItem("Users", tabName = "users", icon = icon("user")),
             menuItem("Group Emails", tabName = "group_emails", icon = icon("envelope")),
-            menuItem("Certificate Emails", tabName = "certificate", icon = icon("book"))
+            menuItem("Certificate Emails", tabName = "certificate", icon = icon("book")),
+            menuItem("Transactions", tabName = "transactions", icon = icon("usd"))
         )
     ),
     
@@ -63,7 +64,15 @@ ui <- dashboardPage(
                     ),
                     column(width = 4,
                            actionButton(inputId = "send_certificate", label = "Send Certificate")
+                    ),
+                    column(width = 4,
+                           actionButton(inputId = "save_user_transactions_to_db", label = "Save Transaction User into DB")
                     )
+            ),
+            # Show the users with transactions
+            tabItem(tabName = "transactions", 
+                    DTOutput("users_transactions_table"),
+                    tags$br(),tags$br(),tags$br(),tags$br()
             )
         )
     )
