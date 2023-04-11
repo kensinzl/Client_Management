@@ -65,6 +65,13 @@ conn = dbConnect(RSQLite::SQLite(), "USER_INFO.db")
 # Google cert
 google_pwd = ""
 
+# Outlook
+email = "hello@nurtureheart.org"
+sender = paste0("Nurture Heart NZ <", email, ">")
+email_password = ""
+smtp_server = "smtp.office365.com"
+smtp_port = 587
+
 
 # create related tables if not exist
 # does_exist_users = dbGetQuery(conn, "SELECT count(name) FROM sqlite_master WHERE type='table' AND name='USERS'")

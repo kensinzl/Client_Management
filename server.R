@@ -71,15 +71,18 @@ server = function(input, output, session) {
     ##################################################################
     ##                  Test Email To Check Layout
     ##################################################################
+    # https://productivity.godaddy.com/#/mailbox/28184832
+    # https://sg.godaddy.com/help/enable-smtp-authentication-40981
+    # https://productivity.godaddy.com/#/ => Users => Manage => Advanced Settings => SMTP => ON
     observeEvent(input$send_test_email, {
-        send.mail(from = "Nurture Heart NZ <nurtureheartnz@gmail.com>",
+        send.mail(from = sender,
                   to = c("superyue0401@gmail.com", "zlchldjyy@gmail.com"),
                   subject = " This is a Test Email ",
                   body = read_file("./www/html_email.html"),
                   #attach.files = c("./www/presenter_sign.png", "./www/final_certificate.pdf"),
                   html = TRUE,
                   encoding = "utf-8",
-                  smtp = list(host.name = "smtp.gmail.com", port = 465, user.name = "nurtureheartnz@gmail.com", passwd = google_pwd, ssl = TRUE),
+                  smtp = list(host.name = smtp_server, port = smtp_port, user.name = email, passwd = email_password, tls = TRUE),
                   authenticate = TRUE,
                   send = TRUE
                 )
@@ -91,14 +94,14 @@ server = function(input, output, session) {
     ##################################################################
     observeEvent(input$send_email, {
         
-        send.mail(from = "Nurture Heart NZ <nurtureheartnz@gmail.com>", 
+        send.mail(from = sender, 
                   to = reactive_group_users_email()$Email,
                   subject = " Test Email ",
                   body = read_file("./www/html_email.html"),
                   #attach.files = c("./www/presenter_sign.png", "./www/final_certificate.pdf"),
                   html = TRUE,
                   encoding = "utf-8",
-                  smtp = list(host.name = "smtp.gmail.com", port = 465, user.name = "nurtureheartnz@gmail.com", passwd = google_pwd, ssl = TRUE),
+                  smtp = list(host.name = smtp_server, port = smtp_port, user.name = email, passwd = email_password, tls = TRUE),
                   authenticate = TRUE,
                   send = TRUE
         )
@@ -169,14 +172,14 @@ server = function(input, output, session) {
         # compress all certificates into a zip folder
         zip(zipfile = "Certificate.zip", files = "cert", recurse = TRUE)
         # Send all certificate as a zip to review fist
-        send.mail(from = "Nurture Heart NZ <nurtureheartnz@gmail.com>",
+        send.mail(from = sender,
                   to = c("superyue0401@gmail.com", "zlchldjyy@gmail.com"),
                   subject = " Certificates For Users ",
                   body = '<HTML><body><h1 style = "color: red; ">Please review the layout of the certificates first</h1></body></HTML>',
                   attach.files = "Certificate.zip",
                   html = TRUE,
                   encoding = "utf-8",
-                  smtp = list(host.name = "smtp.gmail.com", port = 465, user.name = "nurtureheartnz@gmail.com", passwd = google_pwd, ssl = TRUE),
+                  smtp = list(host.name = smtp_server, port = smtp_port, user.name = email, passwd = email_password, tls = TRUE),
                   authenticate = TRUE,
                   send = TRUE
         )
@@ -208,7 +211,7 @@ server = function(input, output, session) {
         lapply(c(1: nrow(reactive_all_certificate_users())), function(index) {
             user = reactive_all_certificate_users()[index, ]
             # send the certficate to each user
-            send.mail(from = "Nurture Heart NZ <nurtureheartnz@gmail.com>",
+            send.mail(from = sender,
                       to = c(user$Email),
                       subject = "Congratulations on joining your event!",
                       body = paste0("<HTML>
@@ -223,7 +226,8 @@ server = function(input, output, session) {
                       attach.files = paste0("./cert/Certificate_", user$Name,".jpeg"),
                       html = TRUE,
                       encoding = "utf-8",
-                      smtp = list(host.name = "smtp.gmail.com", port = 465, user.name = "nurtureheartnz@gmail.com", passwd = google_pwd, ssl = TRUE),
+                      #smtp = list(host.name = "smtp.gmail.com", port = 465, user.name = "nurtureheartnz@gmail.com", passwd = google_pwd, ssl = TRUE),
+                      smtp = list(host.name = smtp_server, port = smtp_port, user.name = email, passwd = email_password, tls = TRUE),
                       authenticate = TRUE,
                       send = TRUE
             )
