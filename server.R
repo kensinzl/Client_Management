@@ -72,7 +72,7 @@ server = function(input, output, session) {
     ##                  Test Email To Check Layout
     ##################################################################
     # https://productivity.godaddy.com/#/mailbox/28184832
-    # https://sg.godaddy.com/help/enable-smtp-authentication-40981
+    # https://sg.godaddy.com/help/enable-smtp-authentication-40981 => ensure you open the SMTP authentication
     # https://productivity.godaddy.com/#/ => Users => Manage => Advanced Settings => SMTP => ON
     observeEvent(input$send_test_email, {
         send.mail(from = sender,

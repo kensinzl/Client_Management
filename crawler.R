@@ -37,5 +37,13 @@ write.csv(final, file = "kindergarten.csv", row.names = TRUE)
 
 
 
+page_url = "https://nido.edu.au/early-schools/"
+site = read_html(page_url)
+emails = site %>% html_nodes("span.cat-email") %>% html_text()
+my_strings <- sub("^E: ", "", emails)
+write.csv(my_strings, file = "yue.csv", row.names = TRUE)
+
+
+
 
 
